@@ -44,7 +44,7 @@ func (c *client) UploadFile(repo, filename, sessionID string, in io.Reader) erro
 
 func (c *client) UploadDone(repo, sessionID string) error {
 	uri := fmt.Sprintf(pathUploadDone, c.base, repo, sessionID)
-	err := c.postRaw(uri, nil, nil)
+	err := c.post(uri, nil, nil)
 	return err
 }
 
@@ -95,8 +95,7 @@ func (c *client) doRaw(rawurl, method string, in, out interface{}) error {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode > http.StatusPartialContent {
-		fmt.Println(resp.StatusCode)
+	if resp.StatusCode > 208 {
 		out, _ := ioutil.ReadAll(resp.Body)
 		return fmt.Errorf(string(out))
 	}
@@ -134,7 +133,7 @@ func (c *client) request(rawurl, method string, in, out interface{}) (io.ReadClo
 	if err != nil {
 		return nil, err
 	}
-	if resp.StatusCode > http.StatusPartialContent {
+	if resp.StatusCode > 208 {
 		defer resp.Body.Close()
 		out, _ := ioutil.ReadAll(resp.Body)
 		return nil, fmt.Errorf(string(out))

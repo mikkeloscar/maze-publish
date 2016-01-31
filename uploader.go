@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
+	"path"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 // Uploader is a wrapper around http client for uploading packages to a
@@ -14,6 +17,11 @@ type Uploader struct {
 }
 
 func (u *Uploader) Do(pkgs []*BuiltPkg) error {
+	if len(pkgs) == 0 {
+		log.Println("no packages to upload")
+		return nil
+	}
+
 	uResp, err := u.client.UploadStart(u.repo)
 	if err != nil {
 		return err
@@ -84,7 +92,7 @@ func (u *Uploader) uploadFile(file string) error {
 	}
 	defer f.Close()
 
-	err = u.client.UploadFile(u.repo, file, u.sessionID, f)
+	err = u.client.UploadFile(u.repo, path.Base(file), u.sessionID, f)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err

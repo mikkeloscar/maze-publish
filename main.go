@@ -33,7 +33,9 @@ func main() {
 	plugin.MustParse()
 
 	var pkgs []*BuiltPkg
-	err := loadBuiltPkgs(path.Join(workspace.Path, "packages.built"), pkgs)
+	err := loadBuiltPkgs(path.Join(workspace.Path, "packages.built"), &pkgs)
+
+	fmt.Println(pkgs)
 
 	uploader := Uploader{
 		client: NewClient(vargs.URL),

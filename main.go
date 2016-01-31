@@ -36,9 +36,8 @@ func main() {
 	err := loadBuiltPkgs(path.Join(workspace.Path, "packages.built"), pkgs)
 
 	uploader := Uploader{
-		// client: NewClient(vargs.URL),
-		client: NewClient("http://publish.moscar.net"),
-		repo:   "test",
+		client: NewClient(vargs.URL),
+		repo:   vargs.Repo,
 	}
 
 	err = uploader.Do(pkgs)

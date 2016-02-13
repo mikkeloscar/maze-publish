@@ -20,6 +20,7 @@ type BuiltPkg struct {
 // Publish defines the args passed from the config file.
 type Publish struct {
 	URL       string `json:"url"`
+	Owner     string `json:"owner"`
 	Repo      string `json:"repo"`
 	AuthToken string `json:"auth"`
 }
@@ -37,6 +38,7 @@ func main() {
 
 	uploader := Uploader{
 		client: NewClient(vargs.URL),
+		owner:  vargs.Owner,
 		repo:   vargs.Repo,
 	}
 

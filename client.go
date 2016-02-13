@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	pathUploadStart = "%s/api/repos/%s/upload/start"
-	pathUploadFile  = "%s/api/repos/%s/upload/file/%s/%s"
-	pathUploadDone  = "%s/api/repos/%s/upload/done/%s"
+	pathUploadStart = "%s/api/repos/%s/%s/upload/start"
+	pathUploadFile  = "%s/api/repos/%s/%s/upload/file/%s/%s"
+	pathUploadDone  = "%s/api/repos/%s/%s/upload/done/%s"
 )
 
 type UploadStart struct {
@@ -29,21 +29,21 @@ func NewClient(uri string) *client {
 	return &client{http.DefaultClient, uri}
 }
 
-func (c *client) UploadStart(repo string) (*UploadStart, error) {
+func (c *client) UploadStart(owner, repo string) (*UploadStart, error) {
 	out := new(UploadStart)
-	uri := fmt.Sprintf(pathUploadStart, c.base, repo)
+	uri := fmt.Sprintf(pathUploadStart, c.base, owner, repo)
 	err := c.post(uri, nil, out)
 	return out, err
 }
 
-func (c *client) UploadFile(repo, filename, sessionID string, in io.Reader) error {
-	uri := fmt.Sprintf(pathUploadFile, c.base, repo, filename, sessionID)
+func (c *client) UploadFile(owner, repo, filename, sessionID string, in io.Reader) error {
+	uri := fmt.Sprintf(pathUploadFile, c.base, owner, repo, filename, sessionID)
 	err := c.postRaw(uri, in, nil)
 	return err
 }
 
-func (c *client) UploadDone(repo, sessionID string) error {
-	uri := fmt.Sprintf(pathUploadDone, c.base, repo, sessionID)
+func (c *client) UploadDone(owner, repo, sessionID string) error {
+	uri := fmt.Sprintf(pathUploadDone, c.base, owner, repo, sessionID)
 	err := c.post(uri, nil, nil)
 	return err
 }

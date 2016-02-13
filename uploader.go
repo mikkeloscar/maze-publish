@@ -12,6 +12,7 @@ import (
 // repository.
 type Uploader struct {
 	client    *client
+	owner     string
 	repo      string
 	sessionID string
 }
@@ -22,7 +23,7 @@ func (u *Uploader) Do(pkgs []*BuiltPkg) error {
 		return nil
 	}
 
-	uResp, err := u.client.UploadStart(u.repo)
+	uResp, err := u.client.UploadStart(u.owner, u.repo)
 	if err != nil {
 		return err
 	}
@@ -38,7 +39,7 @@ func (u *Uploader) Do(pkgs []*BuiltPkg) error {
 		return err
 	}
 
-	err = u.client.UploadDone(u.repo, u.sessionID)
+	err = u.client.UploadDone(u.owner, u.repo, u.sessionID)
 
 	return nil
 }
@@ -92,7 +93,7 @@ func (u *Uploader) uploadFile(file string) error {
 	}
 	defer f.Close()
 
-	err = u.client.UploadFile(u.repo, path.Base(file), u.sessionID, f)
+	err = u.client.UploadFile(u.owner, u.repo, path.Base(file), u.sessionID, f)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err

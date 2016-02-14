@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/drone/drone-plugin-go/plugin"
@@ -20,9 +21,8 @@ type BuiltPkg struct {
 // Publish defines the args passed from the config file.
 type Publish struct {
 	URL       string `json:"url"`
-	Owner     string `json:"owner"`
 	Repo      string `json:"repo"`
-	AuthToken string `json:"auth"`
+	AuthToken string `json:"auth_token"`
 }
 
 func main() {
@@ -36,10 +36,16 @@ func main() {
 	var pkgs []*BuiltPkg
 	err := loadBuiltPkgs(path.Join(workspace.Path, "drone_pkgbuild", "packages.built"), &pkgs)
 
+	owner, name, err := splitOwnerName(vargs.Repo)
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+
 	uploader := Uploader{
 		client: NewClientToken(vargs.URL, vargs.AuthToken),
-		owner:  vargs.Owner,
-		repo:   vargs.Repo,
+		owner:  owner,
+		name:   name,
 	}
 
 	err = uploader.Do(pkgs)
@@ -47,6 +53,14 @@ func main() {
 		log.Error(err)
 		os.Exit(1)
 	}
+}
+
+func splitOwnerName(repo string) (string, string, error) {
+	split := strings.Split(repo, "/")
+	if len(split) != 2 {
+		return "", "", fmt.Errorf("invalid repo format: %s", repo)
+	}
+	return split[0], split[1], nil
 }
 
 type formatter struct{}

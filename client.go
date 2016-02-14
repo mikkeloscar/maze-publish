@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+
+	"golang.org/x/oauth2"
 )
 
 const (
@@ -27,6 +29,12 @@ type client struct {
 
 func NewClient(uri string) *client {
 	return &client{http.DefaultClient, uri}
+}
+
+func NewClientToken(uri, token string) *client {
+	config := new(oauth2.Config)
+	auther := config.Client(oauth2.NoContext, &oauth2.Token{AccessToken: token})
+	return &client{auther, uri}
 }
 
 func (c *client) UploadStart(owner, repo string) (*UploadStart, error) {

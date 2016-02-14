@@ -37,7 +37,7 @@ func main() {
 	err := loadBuiltPkgs(path.Join(workspace.Path, "drone_pkgbuild", "packages.built"), &pkgs)
 
 	uploader := Uploader{
-		client: NewClient(vargs.URL),
+		client: NewClientToken(vargs.URL, vargs.AuthToken),
 		owner:  vargs.Owner,
 		repo:   vargs.Repo,
 	}

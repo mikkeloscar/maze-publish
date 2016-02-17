@@ -26,6 +26,17 @@ type Publish struct {
 }
 
 func main() {
+	// configure log
+	log.SetFormatter(new(formatter))
+
+	err := run()
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
 	var workspace = plugin.Workspace{}
 	var vargs = Publish{}
 
@@ -39,7 +50,7 @@ func main() {
 	owner, name, err := splitOwnerName(vargs.Repo)
 	if err != nil {
 		log.Error(err)
-		os.Exit(1)
+		return err
 	}
 
 	uploader := Uploader{
@@ -51,8 +62,10 @@ func main() {
 	err = uploader.Do(pkgs)
 	if err != nil {
 		log.Error(err)
-		os.Exit(1)
+		return err
 	}
+
+	return nil
 }
 
 func splitOwnerName(repo string) (string, string, error) {

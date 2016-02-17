@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-
-	log "github.com/Sirupsen/logrus"
 )
 
 // Uploader is a wrapper around http client for uploading packages to a
@@ -19,7 +17,6 @@ type Uploader struct {
 
 func (u *Uploader) Do(pkgs []*BuiltPkg) error {
 	if len(pkgs) == 0 {
-		log.Println("no packages to upload")
 		return nil
 	}
 

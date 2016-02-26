@@ -2,7 +2,7 @@
 #
 #     docker build --rm=true -t mikkeloscar/maze-publish .
 
-FROM scratch
+FROM centurylink/ca-certs
 MAINTAINER Mikkel Oscar Lyderik <mikkeloscar@gmail.com>
 
 # Add binary

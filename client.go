@@ -144,7 +144,7 @@ func (c *client) request(rawurl, method string, in, out interface{}) (io.ReadClo
 	if resp.StatusCode > 208 {
 		defer resp.Body.Close()
 		out, _ := ioutil.ReadAll(resp.Body)
-		return nil, fmt.Errorf(string(out))
+		return nil, fmt.Errorf("%d - %s", resp.StatusCode, string(out))
 	}
 	return resp.Body, nil
 }

@@ -81,9 +81,8 @@ func (u *Uploader) uploadPkg(pkg *BuiltPkg, ch chan<- error) {
 
 	if pkg.Signature != "" {
 		err = u.uploadFile(pkg.Signature)
+		ch <- err
 	}
-
-	ch <- err
 }
 
 func (u *Uploader) uploadFile(file string) error {

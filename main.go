@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/drone/drone-plugin-go/plugin"
 )
 
 // BuiltPkg defines a built package and optional signature file.
@@ -18,7 +17,7 @@ type BuiltPkg struct {
 	Signature string `json:"signature"`
 }
 
-// Publish defines the args passed from the config file.
+// Publish defines the options passed from the config file.
 type Publish struct {
 	URL       string `json:"url"`
 	Repo      string `json:"repo"`
@@ -37,15 +36,15 @@ func main() {
 }
 
 func run() error {
-	var workspace = plugin.Workspace{}
-	var vargs = Publish{}
-
-	plugin.Param("workspace", &workspace)
-	plugin.Param("vargs", &vargs)
-	plugin.MustParse()
+	vargs := Publish{
+		URL:       os.Getenv("PLUGIN_URL"),
+		Repo:      os.Getenv("PLUGIN_REPO"),
+		AuthToken: os.Getenv("MAZE_TOKEN"),
+	}
+	workspace := os.Getenv("DRONE_WORKSPACE")
 
 	var pkgs []*BuiltPkg
-	err := loadBuiltPkgs(path.Join(workspace.Path, "drone_pkgbuild", "packages.built"), &pkgs)
+	err := loadBuiltPkgs(path.Join(workspace, "drone_pkgbuild", "packages.built"), &pkgs)
 
 	owner, name, err := splitOwnerName(vargs.Repo)
 	if err != nil {
